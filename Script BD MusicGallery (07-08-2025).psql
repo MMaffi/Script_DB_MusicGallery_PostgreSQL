@@ -1,4 +1,4 @@
-Banco de dados do MusicGallery
+-- Banco de dados do MusicGallery
 
 -- Tabela de usuários
 CREATE TABLE IF NOT EXISTS users (
@@ -44,4 +44,5 @@ CREATE TABLE IF NOT EXISTS search_history (
 CREATE TABLE IF NOT EXISTS email_suggestions (
   user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   sent_at TIMESTAMPTZ NOT NULL
+
 );
