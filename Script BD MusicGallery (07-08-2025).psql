@@ -1,0 +1,47 @@
+Banco de dados do MusicGallery
+
+-- Tabela de usuários
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela de configurações disponíveis
+CREATE TABLE IF NOT EXISTS settings (
+  id SERIAL PRIMARY KEY,
+  key_name VARCHAR(50) NOT NULL UNIQUE,
+  description VARCHAR(255)
+);
+
+-- Inserção dos tipos de configuração
+INSERT INTO settings (key_name, description) VALUES
+  ('theme', 'Tema do site (dark, light, system)'),
+  ('language', 'Idioma preferido do usuário'),
+  ('notifications', 'Receber notificações (enabled, disable)')
+ON CONFLICT (key_name) DO NOTHING;
+
+-- Tabela de configurações por usuário
+CREATE TABLE IF NOT EXISTS user_settings (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  setting_id INTEGER NOT NULL REFERENCES settings(id) ON DELETE CASCADE,
+  value VARCHAR(100) NOT NULL,
+  UNIQUE (user_id, setting_id)
+);
+
+-- Tabela de histórico de buscas
+CREATE TABLE IF NOT EXISTS search_history (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  term VARCHAR(255) NOT NULL,
+  timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela de controle de envio de email's
+CREATE TABLE IF NOT EXISTS email_suggestions (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  sent_at TIMESTAMPTZ NOT NULL
+);
